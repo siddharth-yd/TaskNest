@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# TaskNest
+
+TaskNest is a Project & Task Management application built with Next.js and Tailwind CSS.
+
+## Features
+
+- User login with email
+- Project and task management with full CRUD operations
+- Task filtering and search by status, priority, and tags
+- Responsive design with Tailwind CSS
+- State management using MobX
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Ensure you have Node.js and npm installed.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+1. **Clone the repository:**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   git clone https://github.com/siddharth-yd/tasknest.git
+   cd tasknest
+   ```
+2. **Install dependencies:**
 
-## Learn More
+    ```bash
+    npm install
+    ```
+3. **Run the development server:**
 
-To learn more about Next.js, take a look at the following resources:
+    ```bash
+    npm run dev
+    ```
+Open http://localhost:3000 to view it in the browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## How to Use
+- Login: Enter your email to log in.
+- Manage Projects: Create, view, edit, and delete projects.
+- Manage Tasks: Inside each project, manage tasks with full CRUD support.
+- Filtering: Filter tasks by status, priority, and tags. Search by title or description.
+- Responsive Design: Use on both desktop and mobile devices.
