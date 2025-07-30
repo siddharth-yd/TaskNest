@@ -14,38 +14,34 @@ class ProjectStore {
       projectId: uuidv4(),
       title,
       description,
-      createdAt: new Date(),
       users: [],
+      createdAt: new Date(),
       tasks: []
     };
     this.projects.push(newProject);
   }
 
-  addTask(projectId, task) {
-    const project = this.projects.find(p => p.projectId === projectId);
-    if (project) {
-      project.tasks.push({ ...task, taskId: uuidv4() });
+  editProject(projectId, updatedProject) {
+    const projectIndex = this.projects.findIndex(p => p.projectId === projectId);
+    if (projectIndex !== -1) {
+      this.projects[projectIndex] = { ...this.projects[projectIndex], ...updatedProject };
     }
   }
 
-  filterTasks(projectId, { status, priority, query }) {
-    const project = this.projects.find(p => p.projectId === projectId);
-    if (!project) return [];
-
-    return project.tasks.filter(task =>
-      (status ? task.status === status : true) &&
-      (priority ? task.priority === priority : true) &&
-      (query ? task.title.includes(query) || task.description.includes(query) : true)
-    );
+  deleteProject(projectId) {
+    this.projects = this.projects.filter(p => p.projectId !== projectId);
   }
 }
 
 const ProjectStoreContext = createContext(new ProjectStore());
 
-export const ProjectStoreProvider = ({ children }) => (
-  <ProjectStoreContext.Provider value={new ProjectStore()}>
-    {children}
-  </ProjectStoreContext.Provider>
-);
+export const ProjectStoreProvider = ({ children }) => {
+  const store = useContext(ProjectStoreContext);
+  return (
+    <ProjectStoreContext.Provider value={store}>
+      {children}
+    </ProjectStoreContext.Provider>
+  );
+};
 
 export const useProjectStore = () => useContext(ProjectStoreContext);
