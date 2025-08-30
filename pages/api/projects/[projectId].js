@@ -1,26 +1,34 @@
+import { readDB, writeDB } from "../../../lib/db";
+
 export default function handler(req, res) {
-  const { method, query: { projectId } } = req;
+  const { projectId, email } = req.query;
+  const { method } = req;
+  const db = readDB();
+
+  if (!email) return res.status(400).json({ status: "error", message: "Email required" });
+  if (!db.projects[email]) db.projects[email] = [];
+
+  const idx = db.projects[email].findIndex(p => p.projectId === projectId);
+  if (idx === -1) return res.status(404).json({ status: "error", message: "Project not found" });
 
   switch (method) {
-    case 'GET':
-      const project = projects.find(p => p.projectId === projectId);
-      project ? res.status(200).json(project) : res.status(404).end('Project not found');
-      break;
-    case 'PUT':
-      const index = projects.findIndex(p => p.projectId === projectId);
-      if (index !== -1) {
-        projects[index] = { ...projects[index], ...req.body };
-        res.status(200).json(projects[index]);
-      } else {
-        res.status(404).end('Project not found');
-      }
-      break;
-    case 'DELETE':
-      projects = projects.filter(p => p.projectId !== projectId);
-      res.status(204).end();
-      break;
+    case "GET":
+      return res.json({ status: "success", data: db.projects[email][idx] });
+
+    case "PUT": {
+      let updates = req.body;
+      if (typeof updates === "string") updates = JSON.parse(updates);
+      db.projects[email][idx] = { ...db.projects[email][idx], ...updates };
+      writeDB(db);
+      return res.json({ status: "success", data: db.projects[email][idx] });
+    }
+
+    case "DELETE":
+      db.projects[email].splice(idx, 1);
+      writeDB(db);
+      return res.json({ status: "success", message: "Project deleted" });
+
     default:
-      res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
-      res.status(405).end(`Method ${method} Not Allowed`);
+      return res.status(405).json({ status: "error", message: "Method not allowed" });
   }
 }

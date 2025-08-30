@@ -1,30 +1,35 @@
+import { readDB, writeDB } from "../../../../../lib/db";
+
 export default function handler(req, res) {
-  const { method, query: { projectId, taskId } } = req;
+  const { projectId, taskId, email } = req.query;
+  const { method } = req;
+  const db = readDB();
+
+  if (!email) return res.status(400).json({ status: "error", message: "Email required" });
+  if (!db.projects[email]) db.projects[email] = [];
+
+  const project = db.projects[email].find(p => p.projectId === projectId);
+  if (!project) return res.status(404).json({ status: "error", message: "Project not found" });
+
+  const idx = project.tasks.findIndex(t => t.taskId === taskId);
+  if (idx === -1) return res.status(404).json({ status: "error", message: "Task not found" });
 
   switch (method) {
-    case 'PUT':
-      const project = projects.find(p => p.projectId === projectId);
-      if (!project) return res.status(404).end('Project not found');
-      
-      const taskIndex = project.tasks.findIndex(t => t.taskId === taskId);
-      if (taskIndex !== -1) {
-        project.tasks[taskIndex] = { ...project.tasks[taskIndex], ...req.body };
-        res.status(200).json(project.tasks[taskIndex]);
-      } else {
-        res.status(404).end('Task not found');
-      }
-      break;
-    case 'DELETE':
-      const projectIndex = projects.findIndex(p => p.projectId === projectId);
-      if (projectIndex !== -1) {
-        projects[projectIndex].tasks = projects[projectIndex].tasks.filter(t => t.taskId !== taskId);
-        res.status(204).end();
-      } else {
-        res.status(404).end('Project not found');
-      }
-      break;
+    case "PUT": {
+      let updates = req.body;
+      if (typeof updates === "string") updates = JSON.parse(updates);
+
+      project.tasks[idx] = { ...project.tasks[idx], ...updates };
+      writeDB(db);
+      return res.json({ status: "success", data: project.tasks[idx] });
+    }
+
+    case "DELETE":
+      project.tasks.splice(idx, 1);
+      writeDB(db);
+      return res.json({ status: "success", message: "Task deleted" });
+
     default:
-      res.setHeader('Allow', ['PUT', 'DELETE']);
-      res.status(405).end(`Method ${method} Not Allowed`);
+      return res.status(405).json({ status: "error", message: "Method not allowed" });
   }
 }

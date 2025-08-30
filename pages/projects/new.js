@@ -2,16 +2,22 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import { useProjectStore } from '../../store/projectStore';
+import { useUserStore } from '../../store/userStore';
 
 export default function NewProject() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const projectStore = useProjectStore();
+  const userStore = useUserStore();
   const router = useRouter();
 
-  const handleCreate = (e) => {
+  const handleCreate = async (e) => {
     e.preventDefault();
-    projectStore.addProject({ title, description });
+    await projectStore.addProject({ 
+      email: userStore.email, 
+      title, 
+      description 
+    });
     router.push('/projects');
   };
 
@@ -41,22 +47,18 @@ export default function NewProject() {
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter a short description of the project"
+              placeholder="Enter a short description"
               className="border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none p-3 w-full rounded-lg shadow-sm"
               rows="4"
               required
             />
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
-          >
+          <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-lg shadow-md hover:bg-blue-700 transition">
             Create Project
           </button>
         </form>
       </div>
-
     </>
   );
 }
